@@ -9,10 +9,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-/**
- * this is the player part of the network version of the war game
- */
-public class WarGameNetorkPlayer {
+public class UnoNetworkPlayer {
 
     static final String playerId = "Player-" + new Random().nextInt();
     static final Deque<Card> hand = new LinkedList<>();

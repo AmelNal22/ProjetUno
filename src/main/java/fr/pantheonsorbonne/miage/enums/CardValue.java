@@ -1,59 +1,46 @@
 package fr.pantheonsorbonne.miage.enums;
 
-/**
- * An enum that represend the possible cards value from a deck
- */
 public enum CardValue {
-    ACE("1", 14),
-    TWO("2", 2),
-    THREE("3", 3),
-    FOUR("4", 4),
-    FIVE("5", 5),
-    SIX("6", 6),
-    SEVEN("7", 7),
-    EIGHT("8", 8),
-    NINE("9", 9),
-    TEN("10", 10),
-    JACK("J", 11),
-    QUEEN("Q", 12),
-    KING("K", 13);
+  ZERO("0"),
+  ONE("1"),
+  TWO("2"),
+  THREE("3"),
+  FOUR("4"),
+  FIVE("5"),
+  SIX("6"),
+  SEVEN("7"),
+  HEIGHT("8"),
+  NINE("9"),
+  INVERSE("inverse"),
+  INTERDIT("interdit"),
+  PLUSDEUX("+2"),
+  PLUSQAUTRE("+4"),
+  JOKER("joker");
 
-    final private String stringRepresentation;
-    final private int rank;
+  private String stringRepresentation;
+  private final String valeur;
 
-    CardValue(String stringRepresentation, int value) {
-        this.stringRepresentation = stringRepresentation;
-        this.rank = value;
-    }
+  CardValue(String valeur) {
+    this.valeur = valeur;
+  }
 
-    /**
-     * From a string representation, return the cad
-     *
-     * @param str
-     * @return the corresponding card
-     * @throws RuntimeException if the representation is invalid
-     */
-    public static CardValue valueOfStr(String str) {
-        for (CardValue value : CardValue.values()) {
-            if (str.equals(value.getStringRepresentation())) {
-                return value;
-            }
+  public String getValeur() {
+    return this.valeur;
+  }
+
+  public static CardValue valueOfStr(String str) {
+    for (CardValue value : CardValue.values()) {
+        if (str.equals(value.getStringRepresentation())) {
+            return value;
         }
-
-        throw new RuntimeException("failed to parse value");
-
     }
 
-    public String getStringRepresentation() {
-        return stringRepresentation;
-    }
+    throw new RuntimeException("failed to parse value");
 
-    /**
-     * the rank of the card for comparison purpose. The higher the rank, the better the card
-     *
-     * @return
-     */
-    public int getRank() {
-        return rank;
-    }
+}
+
+public String getStringRepresentation() {
+    return stringRepresentation;
+}
+
 }

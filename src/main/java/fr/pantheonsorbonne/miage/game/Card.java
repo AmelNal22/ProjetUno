@@ -1,83 +1,97 @@
 package fr.pantheonsorbonne.miage.game;
-
-import fr.pantheonsorbonne.miage.enums.CardColor;
-import fr.pantheonsorbonne.miage.enums.CardValue;
-
 import java.util.Arrays;
-import java.util.stream.Collectors;
+
+import fr.pantheonsorbonne.miage.enums.*;
 
 public class Card {
+    
 
-    private final CardColor color;
+    private CardColor color;
     private final CardValue value;
+    private final int point;
 
 
-    public Card(CardColor color, CardValue value) {
+    public Card(final CardColor color,final CardValue value, int point) {
         this.color = color;
         this.value = value;
-    }
-
-    /**
-     * For a String representation of a card, return the card
-     *
-     * @param str
-     * @return the card
-     * @throws RuntimeException if the String representation is Invaliid
-     */
-    public static Card valueOf(String str) {
-        CardValue value;
-        CardColor color;
-        if (str.length() == 3) {//it's a 10
-            value = CardValue.valueOfStr(str.substring(0, 2));
-            color = CardColor.valueOfStr(str.substring(2, 3));
-        } else {
-            value = CardValue.valueOfStr(str.substring(0, 1));
-            color = CardColor.valueOfStr(str.substring(1, 2));
-        }
-        return new Card(color, value);
-
-    }
-
-    public static String cardsToString(Card[] cards) {
-        return Arrays.stream(cards).map(Card::toString).collect(Collectors.joining(";"));
-    }
-
-    public static Card[] stringToCards(String cards) {
-        if (cards.isEmpty()) {
-            return new Card[0];
-        }
-        return (Card[]) Arrays.stream(cards.split(";")).map(Card::valueOf).toArray(Card[]::new);
+        this.point = point;
     }
 
 
-    /**
-     * Get the color of the card
-     *
-     * @return
-     */
     public CardColor getColor() {
         return color;
     }
 
-    @Override
-    public String toString() {
-        return this.getValue().getStringRepresentation() + this.getColor().getStringRepresentation();
+    public void setColor(CardColor couleur){
+        color=couleur;
     }
 
-    public String toFancyString() {
-        int rank = this.getValue().ordinal();
-        if (rank > 10) {
-            rank++;
-        }
-        return new String(Character.toChars(this.color.getCode() + rank));
-    }
 
-    /**
-     * get the value of the card
-     *
-     * @return
-     */
     public CardValue getValue() {
         return value;
+    }
+
+    public int getPoint(){
+        return this.point;
+    }
+
+    
+    public static String valueOfCard(Card card){
+        return card.getColor().getCouleur()+" "+card.getValue().getValeur()+"\n";
+    }
+        
+    public static String cardsToString(Card[] cards) {
+        String carte="";
+        for (int i=0; i<cards.length; i++){
+            carte+=Card.valueOfCard(cards[i]);
+        }
+
+        return carte;
+    }
+
+    public static Card valueOf(String str){
+        int point = 0;
+        return new Card(CardColor.valueOfStr(str), CardValue.valueOfStr(str), point);
+    }
+    
+    public static Card[] stringToCards(String cards) {
+        if (cards.isEmpty()) {
+            return new Card[0];
+        }
+        return (Card[]) Arrays.stream(cards.split("\n")).map(Card::valueOf).toArray(Card[]::new);
+    }
+    
+    // SECTION CARTES SPECIALES
+
+    public static boolean specialCard(Card card) {
+        return (card.getValue().getValeur().length() != 1);
+    }
+
+    // si c'est sens inverse
+    public static boolean isInverse(Card card) {
+        return card.getValue().getValeur().equals("inverse");
+    }
+
+    // si c'est sens interdit
+    public static boolean isInterdit(Card card) {
+        return card.getValue().getValeur().equals("interdit");
+    }
+
+    // si on peut choisir couleur
+    public static boolean isJoker(Card card) {
+        String value = card.getValue().getValeur();
+        return value.equals("joker");
+    }
+
+    // si on peut chosir couleur et +4
+    public static boolean isTake4(Card card) {
+        String value = card.getValue().getValeur();
+        return value.equals("+4");
+    }
+
+    // si +2
+    public static boolean isTake2(Card card) {
+        String value = card.getValue().getValeur();
+        return value.equals("+2");
     }
 }

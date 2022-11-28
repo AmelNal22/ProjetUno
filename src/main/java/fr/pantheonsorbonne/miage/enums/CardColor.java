@@ -1,34 +1,35 @@
 package fr.pantheonsorbonne.miage.enums;
 
-/**
- * List the possible colors of a card
- */
 public enum CardColor {
-    SPADE(127137),
-    HEART(127137 + 16),
-    DIAMOND(127137 + 16 * 2),
-    CLUB(127137 + 16 * 3);
+    ROUGE("R"),
+    VERT("V"),
+    JAUNE("J"),
+    BLEU("B");
 
-    private final int code;
+    private final String couleur;
+    private String stringRepresentation;
 
-    CardColor(int code) {
-        this.code = code;
+    CardColor(String couleur) {
+        this.couleur = couleur;
     }
 
-    public static CardColor valueOfStr(String substring) {
+    public String getCouleur(){
+        return this.couleur;
+    }
+
+    public static CardColor valueOfStr(String str) {
         for (CardColor color : CardColor.values()) {
-            if (color.name().substring(0, 1).equals(substring)) {
+            if (str.equals(color.getStringRepresentation())) {
                 return color;
             }
         }
-        throw new RuntimeException("No Such Color");
+    
+        throw new RuntimeException("failed to parse value");
+    
     }
-
-    public int getCode() {
-        return code;
-    }
-
+    
     public String getStringRepresentation() {
-        return "" + this.name().charAt(0);
+        return stringRepresentation;
     }
-}
+    
+    }
