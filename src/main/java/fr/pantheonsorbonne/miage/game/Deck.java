@@ -4,8 +4,6 @@ import java.util.Random;
 
 import fr.pantheonsorbonne.miage.enums.*;
 
-
-
 public class Deck {
     
     private static final Random random = new Random();
@@ -63,8 +61,7 @@ public class Deck {
     }
     
 
-    public Deck(){
-
+    private Deck(){
     }
 
 
@@ -84,13 +81,8 @@ public class Deck {
         return pioche[piocheSize-- - 1];
     }
 
-    public static boolean carteVide(){
-        return piocheSize == 0;
-    }
-
-
     public static Card erreur() throws IllegalArgumentException{
-        if(carteVide()){
+        if(piocheSize == 0){
             throw new IllegalArgumentException("Erreur car il n'y a plus de cartes dans le paquet");
         }
         return pioche[--piocheSize];

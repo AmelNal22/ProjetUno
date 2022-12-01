@@ -3,10 +3,12 @@ import fr.pantheonsorbonne.miage.game.*;
 import fr.pantheonsorbonne.miage.enums.CardColor;
 import java.util.*;
 
+//static: pas d'objet
+
 public class Strategie {
 
      //chercher valeur max parmi les memes couleur de la cartes
-     public Card searchMaxValueCard(Card[] cardsInHandOfSameColor){
+    private Card searchMaxValueCard(Card[] cardsInHandOfSameColor){
         int max = 0;
         Card cardFind = null;
         for (int i=0; i<cardsInHandOfSameColor.length; i++){
@@ -20,7 +22,7 @@ public class Strategie {
     }
 
     //cherche toute les cartes de la meme couleur
-    public Card[] searchSameColorsCard(CardColor color, int nbrOfSameColorCard, Deque<Card> handOfPlayer){
+    private Card[] searchSameColorsCard(CardColor color, int nbrOfSameColorCard, Deque<Card> handOfPlayer){
         Card[] cardsFind=new Card[nbrOfSameColorCard];
         int count=0;
         for (Card currCard: handOfPlayer){
@@ -32,7 +34,7 @@ public class Strategie {
     }
 
     //trouver meme couleur que le talon
-    public Card findSameColorOfDeck(Card cardToFind, Deque<Card> handOfPlayer){
+    private Card findSameColorOfDeck(Card cardToFind, Deque<Card> handOfPlayer){
         for (Card currCard: handOfPlayer){
             if(currCard.getColor().equals(cardToFind.getColor())){
                 return currCard;
@@ -42,7 +44,7 @@ public class Strategie {
     }
 
     //recherche meme valeur de carte
-    public Card findSameValueOfDeck(Card cardToFind, Deque<Card> handOfPlayer){
+    private Card findSameValueOfDeck(Card cardToFind, Deque<Card> handOfPlayer){
         for (Card currCard: handOfPlayer){
             if(currCard.getValue().equals(cardToFind.getValue())){
                 return currCard;
@@ -53,7 +55,7 @@ public class Strategie {
     }
 
     //chercher le nbr de cartes de cette couleur
-    public int findRepetitionColor(CardColor color, Deque<Card> handOfPlayer){
+    private static int findCardSameColor(CardColor color, Deque<Card> handOfPlayer){
         int count=0;
             for (Card currCard: handOfPlayer){
                 if (currCard.getColor().equals(color)){
@@ -64,30 +66,27 @@ public class Strategie {
     }
 
     // chercher la couleur la plus presente dans le jeux de carte
-    public CardColor findMaxColor(Deque<Card> handOfPlayer){
-        int max=0;
+    private static CardColor findMostPresentColor(Deque<Card> handOfPlayer){
+        int max = 0;
         CardColor colorFind=handOfPlayer.getFirst().getColor();
         for (CardColor color : CardColor.values()){
-            int count=findRepetitionColor(color,handOfPlayer);
-            if (count>max){
-                max=count;
-                colorFind=color;
+            int count=findCardSameColor(color,handOfPlayer);
+            if (count > max){
+                max = count;
+                colorFind = color;
             }
         }
-
         return colorFind;
     }
 
     //choisir une couleur pour la carte du joker ou +4
-    public Card chooseColor(Card card, Deque<Card> handOfPlayer){
+    public static Card chooseColor(Card card, Deque<Card> handOfPlayer){
         if (handOfPlayer.isEmpty()){
             return card;
         }
-        card.setColor(findMaxColor(handOfPlayer));
+        card.setColor(findMostPresentColor(handOfPlayer));
         return card;
     }
-
-   
 
     Card findCardToChangeColor( Deque<Card> handOfPlayer){
         for (Card currCard : handOfPlayer){
@@ -122,31 +121,29 @@ public class Strategie {
             if (Card.isJoker(currCard)){
                 return currCard;
             }
-            if (currCard.getColor().equals(cardToFind.getColor()) && Card.specialCard(currCard) && !Card.isTake4(currCard)){
+            if (currCard.getColor().equals(cardToFind.getColor()) && Card.isSpecialCard(currCard) && !Card.isTake4(currCard)){
                 return currCard;
             }
-            if (currCard.getValue().equals(cardToFind.getValue()) && Card.specialCard(currCard) && !Card.isTake4(currCard)){
+            if (currCard.getValue().equals(cardToFind.getValue()) && Card.isSpecialCard(currCard) && !Card.isTake4(currCard)){
                 return currCard;
             }
         }
         return null;
     }
 
-    //ajouts de plusieaurs cartes dans la main
-    public void addCards(int nbrOfAdding,Deque<Card> handOfPlayer){
+    //ajouts de plusieurs cartes dans le main
+    public static void addCards(int nbrOfAdding,Deque<Card> handOfPlayer){
         for (int i=0; i<nbrOfAdding; i++){
             addHandCard(handOfPlayer);
         }
-    
     }
 
-    public boolean add4Cards(Deque<Card> handOfPlayer){
+    public static boolean add4Cards(Deque<Card> handOfPlayer){
         addCards(4,handOfPlayer);
         return true;
-        
     }
 
-    public boolean add2Cards(Deque<Card> handOfPlayer) {
+    public static boolean add2Cards(Deque<Card> handOfPlayer) {
         addCards(2,handOfPlayer);
         return true;
     }
@@ -159,12 +156,11 @@ public class Strategie {
         if (Integer.parseInt(cardFind.getValue().getValeur())>Integer.parseInt(cardToCompare.getValue().getValeur())){
             return cardFind;
         }
-    
         return cardToCompare;
     }
 
     //poser carte sur la Pile
-    public void playCard(Card card,Deque<Card> handOfPlayer){
+    public static void playCard(Card card,Deque<Card> handOfPlayer){
         Pile.addCardToGameDeck(card);
         removeHandCard(card,handOfPlayer);
         if (Card.isJoker(card) || Card.isTake4(card)){
@@ -173,11 +169,12 @@ public class Strategie {
     }
 
     //supprime une carte de la main
-    public void removeHandCard(Card card,Deque<Card> handOfPlayer){
+    public static void removeHandCard(Card card,Deque<Card> handOfPlayer){
         handOfPlayer.remove(card);
     }
 
-    public boolean meth1(Card cardToFind,Deque<Card> handOfPlayer){
+    //commence par chercher la même valeur que le deck, sinon cherche la même couleur
+    public boolean searchCardToPutBetweenValueAndColor(Card cardToFind,Deque<Card> handOfPlayer){
         Card cardFind=findSameValueOfDeck(cardToFind,handOfPlayer);
         if (cardFind==null){
             cardFind=findSameColorOfDeck(cardToFind,handOfPlayer);
@@ -190,13 +187,10 @@ public class Strategie {
         }
         playCard(cardFind,handOfPlayer);
         return true;
-
-
 }
 
-
 //ajout d'une carte dans la main  (pioche ou +2 ou +4)
-public void addHandCard(Deque<Card> handOfPlayer){
+public static void addHandCard(Deque<Card> handOfPlayer){
     Card[] deck=Deck.getRandomCards(1);
     handOfPlayer.addFirst(deck[0]);
     if (Deck.getPiocheSize()<=0){
@@ -204,10 +198,10 @@ public void addHandCard(Deque<Card> handOfPlayer){
     }
 }
 
-public boolean readyToPlay(Card cardToFind,Deque<Card> handOfPlayer){
+public boolean searchCardToPut(Card cardToFind,Deque<Card> handOfPlayer){
     Card cardFind=searchSpecialCard(cardToFind,handOfPlayer);
     if (cardFind==null){
-        int nbrOfSameColorCards=findRepetitionColor(cardToFind.getColor(),handOfPlayer);
+        int nbrOfSameColorCards=findCardSameColor(cardToFind.getColor(),handOfPlayer);
         Card[] sameColorCards=searchSameColorsCard(cardToFind.getColor(), nbrOfSameColorCards,handOfPlayer);
         Card cardFindWithColor=searchMaxValueCard(sameColorCards);
         if (cardFindWithColor!=null){

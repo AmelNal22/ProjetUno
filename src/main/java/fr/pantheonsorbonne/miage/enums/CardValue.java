@@ -34,7 +34,6 @@ public enum CardValue {
             return value;
         }
     }
-
     throw new RuntimeException("failed to parse value");
 
 }

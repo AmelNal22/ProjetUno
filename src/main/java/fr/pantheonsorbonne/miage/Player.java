@@ -9,17 +9,12 @@ public class Player {
     private int point=0;
     private Strategie playerStrategie = new Strategie();
 
-    //constructeur 
     Player(String nom){
         this.name=nom;
     }
 
     public String getName(){
         return name;
-    }
-
-    public Strategie getPlayerStrategie(){
-        return playerStrategie;
     }
 
     public Deque<Card> getHand(){
@@ -29,6 +24,7 @@ public class Player {
     public void setPoint(int newPoint){
         this.point=newPoint;
     }
+
     public int getPoint(){
         return this.point;
     }
@@ -46,7 +42,7 @@ public class Player {
     }
 
     //ajout d'une carte dans la main  (pioche ou +2 ou +4)
-    public void addHandCard() {
+    private void addHandCard() {
         Card[] deck = Deck.getRandomCards(1);
         this.hand.addFirst(deck[0]);
         if (Deck.getPiocheSize()<=0){
@@ -55,7 +51,7 @@ public class Player {
     }
 
     //supprime une carte de la main
-    public void removeHandCard(Card card){
+    private void removeHandCard(Card card){
         this.hand.remove(card);
     }
 
@@ -64,13 +60,12 @@ public class Player {
         Pile.addCardToGameDeck(card);
         removeHandCard(card);
         if (Card.isJoker(card) || Card.isTake4(card)){
-            playerStrategie.chooseColor(card, hand);
+            Strategie.chooseColor(card, hand);
         }
     }
   
-
-    public boolean readyToPlay(Card cardToFind){
-        if (playerStrategie.readyToPlay(cardToFind, hand)){
+    public boolean startToPlay(Card cardToFind){
+        if (playerStrategie.searchCardToPut(cardToFind, hand)){
             return true;
         }
         else{
@@ -78,22 +73,10 @@ public class Player {
         }
     }
 
-    public boolean drawCard(Card cardToFind){
+    //piocher une carte
+    private boolean drawCard(Card cardToFind){
         addHandCard();
-        return playerStrategie.meth1(cardToFind, hand);
+        return playerStrategie.searchCardToPutBetweenValueAndColor(cardToFind, hand);
     }
-
-
-    // cherche carte meme valeur       ===    indSameValueOfDeck(Card[] card,Card cardToFind)
-    // cherche carte meme couleur    ===   findSameColorOfDeck(cardsInHand, cardToFind)
-    // chercher parmi carte de meme couleur celle qui a la plus grande valeur    === searchMaxValueCard(Card[] cardsInHandOfSameColor)
-    // cherche carte special
-    // tabl de toutes les cartes de meme couleur searchSameColorsCard(Card[] cardsInHand,CardColor color, int nbrOfSameColorCard)
-    //chercher nbr de carte de cette couleur === findRepetitionColor(Card[] cardsInHand,CardColor color)
-    //couleur la plus presente dan le jeu de carte === findMaxColor(Card[] card)
-    //chooseColor(Card card,Card [] cards)  === change couleur de la carte
-    //checher carte de changement de couleur === findCardToChangeColor()
-    //cherhcer carte +2 ou +4 (si meme qie le talon) findTheSameCardOfAdding(Card card)
-    //cherche toute les cartes special
 }
 

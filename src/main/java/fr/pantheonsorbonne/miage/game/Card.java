@@ -63,7 +63,7 @@ public class Card {
     
     // SECTION CARTES SPECIALES
 
-    public static boolean specialCard(Card card) {
+    public static boolean isSpecialCard(Card card) {
         return (card.getValue().getValeur().length() != 1);
     }
 

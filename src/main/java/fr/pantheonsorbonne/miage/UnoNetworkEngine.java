@@ -1,20 +1,15 @@
 package fr.pantheonsorbonne.miage;
-
-import fr.pantheonsorbonne.miage.exception.NoMoreCardException;
 import fr.pantheonsorbonne.miage.game.Card;
 import fr.pantheonsorbonne.miage.model.Game;
 import fr.pantheonsorbonne.miage.model.GameCommand;
 
 import java.util.*;
-
+ 
 public class UnoNetworkEngine extends UnoEngine {
-
-    static final String playerId = "Player-" + new Random().nextInt();
-    private LinkedList<Player> playerOnTheRound=new LinkedList<>();
-    private final Set<String> players;
-    private static final int nbrOfplayerOnTheRound = 4;
-
+    private static final int PLAYER_COUNT = 3;
+    private LinkedList<String> playerOnTheRound=new LinkedList<>();
     private final HostFacade hostFacade;
+    private final Set<String> players;
     private final Game uno;
 
     public UnoNetworkEngine(HostFacade hostFacade, Set<String> players, fr.pantheonsorbonne.miage.model.Game uno) {
@@ -24,97 +19,133 @@ public class UnoNetworkEngine extends UnoEngine {
     }
 
     public static void main(String[] args) {
-
+        //create the host facade
         HostFacade hostFacade = Facade.getFacade();
         hostFacade.waitReady();
 
+        //set the name of the player
         hostFacade.createNewPlayer("Host");
 
-        fr.pantheonsorbonne.miage.model.Game uno = hostFacade.createNewGame("UNO");
+        //create a new game of uno
+        fr.pantheonsorbonne.miage.model.Game uno = hostFacade.createNewGame("uno");
 
-        hostFacade.waitForExtraPlayerCount(nbrOfplayerOnTheRound);
-        
+        //wait for enough players to join
+        hostFacade.waitForExtraPlayerCount(PLAYER_COUNT);
+        System.out.println("Ca commence");
         UnoEngine host = new UnoNetworkEngine(hostFacade, uno.getPlayers(), uno);
         host.play();
+
+
     }
 
     @Override
-    protected LinkedList<Player> getPlayerOnTheRound(){
-        return this.playerOnTheRound;
+    protected Set<String> getInitialPlayers(){
+        return this.uno.getPlayers();
     }
 
-    @Override
-    protected void giveCardsToPlayer() {
-        for (int i=0; i<nbrOfplayerOnTheRound; i++){
-            playerOnTheRound.get(i).setHand();
-            hostFacade.sendGameCommandToPlayer(uno, playerId, new GameCommand("cardsForYou"));
+    protected void setPlayerOnTheRound() {
+        for (String currentPlayer : players) {
+            playerOnTheRound.add(currentPlayer);
+            System.out.println(currentPlayer);
         }
     }
 
     @Override
-    protected LinkedList<Player> inverseGame(int posi) {
-        hostFacade.sendGameCommandToAll(uno, new GameCommand("inverse"));
-        return inverseGame(posi);
+    protected void giveCardsToPlayer(String player) {
+        hostFacade.sendGameCommandToPlayer(uno, player, new GameCommand("cardsForYou"));
+        
     }
 
     @Override
-    protected boolean countNbrOfPoint() {
-        if (countNbrOfPoint()) {
-            hostFacade.sendGameCommandToAll(uno, new GameCommand("inverse"));
-        }
-    }
-
-    @Override
-    protected Card getCardOrGameOver(Collection<Card> leftOverCard, String cardProviderPlayer, String cardProviderPlayerOpponent) {
-
-        try {
-            return getCardFromPlayer(cardProviderPlayer);
-        } catch (NoMoreCardException nmc) {
-            hostFacade.sendGameCommandToPlayer(uno, cardProviderPlayer, new GameCommand("gameOver"));
-            players.remove(cardProviderPlayer);
-            hostFacade.sendGameCommandToPlayer(uno, cardProviderPlayerOpponent, new GameCommand("cardsForYou", Card.cardsToString(leftOverCard.toArray(new Card[leftOverCard.size()]))));
-            return null;
-        }
-
-    }
-
-    /**
-     * give this stack of card to the winner player
-     *
-     * @param roundStack a stack of card at stake
-     * @param winner     the winner
-     */
-    @Override
-    protected void giveCardsToPlayer(Collection<Card> roundStack, String winner) {
-        List<Card> cards = new ArrayList<>();
-        cards.addAll(roundStack);
-        //shuffle the round deck so we are not stuck
-        Collections.shuffle(cards);
-        hostFacade.sendGameCommandToPlayer(uno, winner, new GameCommand("cardsForYou", Card.cardsToString(cards.toArray(new Card[cards.size()]))));
-    }
-
-    /**
-     * we get a card from a player, if possible.
-     * <p>
-     * If the player has no more card, throw an exception
-     *
-     * @param player the name of the player
-     * @return a card from a player
-     * @throws NoMoreCardException if player has no more card.
-     */
-    @Override
-    protected Card getCardFromPlayer(String player) throws NoMoreCardException {
+    protected boolean getCardFromPlayer(String player) {
         hostFacade.sendGameCommandToPlayer(uno, player, new GameCommand("playACard"));
         GameCommand expectedCard = hostFacade.receiveGameCommand(uno);
         if (expectedCard.name().equals("card")) {
-            return Card.valueOf(expectedCard.body());
+            return true;
         }
-        if (expectedCard.name().equals("outOfCard")) {
-            throw new NoMoreCardException();
+        else if  (expectedCard.name().equals("verifWiner")) {
+           return verifIfWinner(player);
+            
         }
-        //should not happen!
-        throw new RuntimeException("invalid state");
-
+        return false;
     }
 
+    @Override
+    protected LinkedList<String> gameIsReversed(int posi) {
+        hostFacade.sendGameCommandToAll(uno, new GameCommand("inverse"));
+        return gameIsReversed(posi);
+    }
+
+    @Override
+    protected void declareWinner(String winner) {
+        hostFacade.sendGameCommandToPlayer(uno, winner, new GameCommand("gameOver", "win"));
+    }
+
+    @Override
+    protected void interditToPlay(int i) {
+        hostFacade.sendGameCommandToPlayer(uno, getPlayerOnTheRound().get(i), new GameCommand("interdit"));
+    }
+
+    @Override
+    protected boolean playRound(){
+        getCardsToRemove();
+        for (String playerName : getPlayerOnTheRound()) {
+            giveCardsToPlayer(playerName);
+        }
+        return super.playRound(); 
+    }
+
+    @Override
+    public boolean verifIfWinner(String player){
+       hostFacade.sendGameCommandToPlayer(uno, player, new GameCommand("verifWinner"));
+       GameCommand winnerOrNot = hostFacade.receiveGameCommand(uno);
+       return winnerOrNot.name().equals("winner");
+    }
+
+    @Override
+    protected boolean countPointAllPlayers() {
+        int counterOfPoint = 0;
+         for (String currPlayer : getPlayerOnTheRound()) {
+            hostFacade.sendGameCommandToPlayer(uno, currPlayer, new GameCommand("countPointAllPlayers"));
+            GameCommand point = hostFacade.receiveGameCommand(uno);
+            counterOfPoint=counterOfPoint+Integer.parseInt(point.body());
+         }
+         String pl = getWinner();
+        hostFacade.sendGameCommandToPlayer(uno, pl, new GameCommand("yourPoints",""+counterOfPoint));
+        GameCommand finalPoint = hostFacade.receiveGameCommand(uno);
+             
+        return Integer.parseInt(finalPoint.body()) >= 100;
+    }
+
+    @Override
+    protected LinkedList<String> getPlayerOnTheRound() {
+        return playerOnTheRound;
+    }
+    
+    @Override
+    protected int searchSpecialCardAdding(Card card, LinkedList<String> playerOnTheRound, int currPosition) {
+        int nextPlayer = currPosition + 1;
+        if (currPosition >= playerOnTheRound.size() - 1) {
+            nextPlayer = 0;
+        }
+            if (Card.isTake4(card)) {
+                hostFacade.sendGameCommandToPlayer(uno, playerOnTheRound.get(nextPlayer), new GameCommand("piochePlus4"));
+                return nextPlayer;
+            } else {
+                hostFacade.sendGameCommandToPlayer(uno, playerOnTheRound.get(nextPlayer) , new GameCommand("piochePlus2"));
+                return nextPlayer;
+            }
+    }
+
+    @Override
+    protected void getCardsToRemove() {
+        for (String currPlayer : getPlayerOnTheRound()) {
+            hostFacade.sendGameCommandToPlayer(uno, currPlayer, new GameCommand("getCardsToRemove"));
+        }
+    }
+
+    @Override
+    protected void setNewPlayerOnTheRound(LinkedList<String> playerOnTheRound) {
+        this.playerOnTheRound = playerOnTheRound;   
+    }
 }

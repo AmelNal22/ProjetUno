@@ -1,10 +1,10 @@
 package fr.pantheonsorbonne.miage.enums;
 
 public enum CardColor {
-    ROUGE("R"),
-    VERT("V"),
-    JAUNE("J"),
-    BLEU("B");
+    RED("R"),
+    GREEN("V"),
+    YELLOW("J"),
+    BLUE("B");
 
     private final String couleur;
     private String stringRepresentation;
@@ -23,9 +23,7 @@ public enum CardColor {
                 return color;
             }
         }
-    
         throw new RuntimeException("failed to parse value");
-    
     }
     
     public String getStringRepresentation() {

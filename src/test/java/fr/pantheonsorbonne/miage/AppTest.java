@@ -2,24 +2,42 @@ package fr.pantheonsorbonne.miage;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Deque;
-import java.util.LinkedList;
+//import java.util.Deque;
+import java.util.HashSet;
+//import java.util.LinkedList;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import fr.pantheonsorbonne.miage.enums.CardColor;
+/*import fr.pantheonsorbonne.miage.enums.CardColor;
 import fr.pantheonsorbonne.miage.enums.CardValue;
 import fr.pantheonsorbonne.miage.game.Card;
-import fr.pantheonsorbonne.miage.game.Deck;
+import fr.pantheonsorbonne.miage.game.Deck;*/
 
 public class AppTest 
 {
-
-    //Classe Play
-
-
-
     @Test
+    public void testPlayer() {
+        Set<String> players = new HashSet<String>();
+        players.add("Amel");
+        players.add("Meryam");
+        LocalUno game = new LocalUno(players);
+        assertNotEquals(players.size() >10, game );
+    }
+
+    /*@Test
+    public void testFindPlayerWithName() {
+        Set<String> players = new HashSet<String>();
+        players.add("Amel");
+        players.add("Meryam");
+        LocalUno game = new LocalUno(players);
+        Player currentPlayer = new Player("Meryam");
+        assertEquals(currentPlayer, game.findPlayerWithName("Meryam") );
+        assertEquals(null, game.findPlayerWithName("Host") );
+    }*/
+
+
+    /*@Test
     public void testGetRandomCards() {
         int length = 10;
         assertNotEquals(length < 0, Deck.getRandomCards(length));
@@ -90,7 +108,7 @@ public class AppTest
         Deque<Card> handOfPlayer = new LinkedList<>();
         Card cardToFind = new Card(null, null, 0);
         assertNull(s.findSameColorOfDeck(cardToFind, handOfPlayer));
-    }
+    }*/
 
     /**@Test
     public void testGamePlay() {
@@ -103,7 +121,7 @@ public class AppTest
         }
     }**/
 
-    @Test
+    /*@Test
     public void testCountPoint() {
         Play p = new Play(3);
         Deque<Card> cardInTheHand = new LinkedList<>();
@@ -192,7 +210,7 @@ public class AppTest
 
         assertTrue(game1.verifIfWinner(game1.getPlayerOnTheRound().getFirst()));
         assertFalse(game1.verifIfWinner(game1.getPlayerOnTheRound().getLast()));
-    }
+    }*/
 
     /**@Test
     public void testMeth1(){
@@ -209,24 +227,6 @@ public class AppTest
         assertTrue(m.getPlayerStrategie().meth1(cardToFind, handOfPlayer));
 
     }**/
-
-    @Test
-    public void testSearchSpecialCardAdding() {
-        Play game1=new Play(3);
-        Player y = new Player(1);
-        Player x = new Player(2);
-        Player z = new Player(3);
-        Card card = new Card(CardColor.VERT,CardValue.JOKER, 50);
-        Card card2 = new Card(CardColor.VERT,CardValue.PLUSQAUTRE, 50);
-        LinkedList<Player> playerOnTheRound = new LinkedList<>();
-        playerOnTheRound.add(y);
-        playerOnTheRound.add(x);
-        playerOnTheRound.add(z);
-        int currPosition = 1;
-        assertEquals(2,game1.searchSpecialCardAdding(card, playerOnTheRound, currPosition));
-        assertEquals(2,game1.searchSpecialCardAdding(card2, playerOnTheRound, currPosition));
-    
-    }
 
     /**@Test
     public void testGetCardsToRemove() {
@@ -245,7 +245,7 @@ public class AppTest
         AssertNotEquals(d.mixCards(), game1.getCardsToRemove());
     }**/
 
-    @Test
+    /*@Test
     public void testSpecialCard() {
 
             Play game1=new Play(3);
@@ -262,7 +262,7 @@ public class AppTest
 
             assertEquals(3, game1.specialCard(3));
             //assertEquals(0, game1.specialCard(5));
-    }
+    }*/
 }
 
 
