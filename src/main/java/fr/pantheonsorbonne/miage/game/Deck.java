@@ -80,7 +80,7 @@ public class Deck {
     }
 
     // Refaire la pioche avec la Pile
-    private static void createNewDeck(int length) {
+    public static void createNewDeck(int length) {
         if (Pile.getGameDeck().size() <= length) {
             throw new IllegalArgumentException("Erreur donc fin du jeu.");
         }

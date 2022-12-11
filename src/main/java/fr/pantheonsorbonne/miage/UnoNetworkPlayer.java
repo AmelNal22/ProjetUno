@@ -16,7 +16,7 @@ public class UnoNetworkPlayer extends Player {
         super(nom, theStrategie);
     }
 
-    private static final String PLAYER_ID = "MEME";
+    private static final String PLAYER_ID = "AMEL";
     static final PlayerFacade playerFacade = Facade.getFacade();
     private static Game uno;
     private static int nbrOfTurn = 0;
@@ -152,9 +152,9 @@ public class UnoNetworkPlayer extends Player {
 
     private static void handleGameOverCommand() {
         if (networkPlayer.point >= 100) {
-            System.out.println("I've won after "+nbrOfTurn+" !");
+            System.out.println("I've won after "+nbrOfTurn+" turn !");
         } else {
-            System.out.println("I've lost after "+nbrOfTurn+"  :-(");
+            System.out.println("I've lost after "+nbrOfTurn+" turn :-(");
         }
         System.exit(0);
     }
