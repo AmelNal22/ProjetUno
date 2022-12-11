@@ -6,6 +6,7 @@ import fr.pantheonsorbonne.miage.model.Game;
 import fr.pantheonsorbonne.miage.model.GameCommand;
 import fr.pantheonsorbonne.miage.strategie.Strateg;
 import fr.pantheonsorbonne.miage.strategie.StrategieColor;
+import java.util.Random;
 
 /**
  * this is the player part of the network version of the uno game
@@ -15,8 +16,8 @@ public class UnoNetworkPlayer extends Player {
     UnoNetworkPlayer(String nom, Strateg theStrategie) {
         super(nom, theStrategie);
     }
-
-    private static final String PLAYER_ID = "AMEL";
+    static Random rand = new Random();
+    static final String PLAYER_ID = "Player-" + rand.nextInt();
     static final PlayerFacade playerFacade = Facade.getFacade();
     private static Game uno;
     private static int nbrOfTurn = 0;
@@ -126,7 +127,6 @@ public class UnoNetworkPlayer extends Player {
 
     private void handlePlayACard(GameCommand command) {
         if (command.params().get(ID).equals(networkPlayer.name)) {
-            System.out.println("A mon nbrOfTurn: " + nbrOfTurn);
             System.out.println("Il me reste " + hand.size() + " cartes.");
             displayHandCard();
             if (!hand.isEmpty()) {
