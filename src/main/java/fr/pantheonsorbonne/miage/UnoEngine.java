@@ -32,7 +32,7 @@ public abstract class UnoEngine {
             Card cardToPut = getCardFromPlayer(player);
             if (cardToPut != null) {
                 playCard(cardToPut, player);
-                if (verifIfWinner((player))) {
+                if (isWinner((player))) {
                     winner = player;
                     return true;
                 }
@@ -77,7 +77,7 @@ public abstract class UnoEngine {
 
     protected abstract void declareWinner(String name);
 
-    protected abstract boolean verifIfWinner(String player);
+    protected abstract boolean isWinner(String player);
 
     protected abstract boolean isGameOver();
 

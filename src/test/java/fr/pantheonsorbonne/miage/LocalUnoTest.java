@@ -26,7 +26,7 @@ public class LocalUnoTest {
     LocalUno game = new LocalUno(listPlayer);
     game.setPlayerOnTheRound();
     String player = "amel";
-    assertTrue(game.verifIfWinner(player));
+    assertTrue(game.isWinner(player));
   }
 
   @Test
@@ -39,7 +39,7 @@ public class LocalUnoTest {
     game.setPlayerOnTheRound();
     String player = "amel";
     game.findPlayerWithName(player).setHand();
-    assertFalse(game.verifIfWinner(player));
+    assertFalse(game.isWinner(player));
   }
 
   @Test

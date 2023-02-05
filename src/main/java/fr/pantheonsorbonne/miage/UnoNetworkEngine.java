@@ -13,7 +13,7 @@ import java.util.*;
  */
 
 public class UnoNetworkEngine extends UnoEngine {
-    private static final int PLAYER_COUNT = 3;
+    private static final int PLAYER_COUNT = 4;
     private Deque<String> playerOnTheRound = new LinkedList<>();
     private final HostFacade hostFacade;
     private final Set<String> players;
@@ -101,7 +101,7 @@ public class UnoNetworkEngine extends UnoEngine {
     }
 
     @Override
-    protected boolean verifIfWinner(String player) {
+    protected boolean isWinner(String player) {
         hostFacade.sendGameCommandToPlayer(uno, player, new GameCommand("verifWinner"));
         GameCommand winnerOrNot = hostFacade.receiveGameCommand(uno);
         return winnerOrNot.name().equals("winner");

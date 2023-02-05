@@ -73,7 +73,7 @@ public class LocalUno extends UnoEngine {
     }
 
     @Override
-    protected boolean verifIfWinner(String player) {
+    protected boolean isWinner(String player) {
         Player thisPlayer = findPlayerWithName(player);
         return thisPlayer.getHand().isEmpty();
     }

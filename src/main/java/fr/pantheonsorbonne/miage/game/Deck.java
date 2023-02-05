@@ -55,6 +55,7 @@ public class Deck {
     }
 
     private static boolean isOneTime(CardValue value) {
+        //you should have used directly the enum here instead of the String
         return value.getValeur().equals("joker") || value.getValeur().equals("+4");
     }
 
